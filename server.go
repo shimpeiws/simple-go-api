@@ -15,6 +15,12 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!\n")
 	})
 
+	e.GET("/users/:id", func(c echo.Context) error {
+		// User ID from path `users/:id`
+		id := c.Param("id")
+		return c.String(http.StatusOK, id)
+	})
+
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))
 }
