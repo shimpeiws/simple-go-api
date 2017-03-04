@@ -26,7 +26,7 @@ func main() {
 		resp, err := http.Get("http://localhost:3000")
 		if err != nil {
 			return c.String(http.StatusNotFound, "Not Found")
-	  }
+		}
 
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
