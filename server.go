@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"io/ioutil"
 
 	"github.com/labstack/echo"
 )
@@ -19,6 +20,17 @@ func main() {
 		// User ID from path `users/:id`
 		id := c.Param("id")
 		return c.String(http.StatusOK, id)
+	})
+
+	e.GET("/rails", func(c echo.Context) error {
+		resp, err := http.Get("http://localhost:3000")
+		if err != nil {
+			return c.String(http.StatusNotFound, "Not Found")
+	  }
+
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		return c.String(http.StatusOK, string(body))
 	})
 
 	// Start server
