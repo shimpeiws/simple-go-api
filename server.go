@@ -64,10 +64,10 @@ func getJwtToken() (string, error) {
 	return jwtResponse.Jwt, nil
 }
 
-func getItems(token string) (*ItemList, error) {
+func getRequest(path, token string) ([]byte, error) {
 	req, err := http.NewRequest(
 		"GET",
-		"http://localhost:3000/items",
+		"http://localhost:3000/" + path,
 		nil,
 	)
 	if err != nil {
@@ -85,6 +85,15 @@ func getItems(token string) (*ItemList, error) {
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+
+func getItems(token string) (*ItemList, error) {
+	body, err := getRequest("items", token)
 	if err != nil {
 		return nil, err
 	}
