@@ -27,6 +27,19 @@ type ItemDetail struct {
 	Name string
 }
 
+type CategoryList struct {
+	Data []Item
+}
+
+type Category struct {
+	Id string
+	Attributes CategoryDetail
+}
+
+type CategoryDetail struct {
+	Name string
+}
+
 func getJwtToken() (string, error) {
 	requestStr := `{"auth":{"email":"test@example.com","password":"test123"}}`
 	req, err := http.NewRequest(
@@ -108,6 +121,22 @@ func getItems(token string) (*ItemList, error) {
 	return itemResponse, nil
 }
 
+func getCategories(token string) (*CategoryList, error) {
+	body, err := getRequest("categories", token)
+	if err != nil {
+		return nil, err
+	}
+
+	categoryResponse := new(CategoryList)
+	fmt.Println("categoryResponse", string(body))
+	jsonParseError := json.Unmarshal(body, &categoryResponse)
+	if jsonParseError != nil {
+		return nil, jsonParseError
+	}
+
+	return categoryResponse, nil
+}
+
 func main() {
 	// Echo instance
 	e := echo.New()
@@ -146,6 +175,12 @@ func main() {
 			return c.String(http.StatusNotFound, getItemErr.Error())
 		}
 		fmt.Println("items", items)
+
+		categories, getCategoryErr := getCategories(token)
+		if getCategoryErr != nil {
+			return c.String(http.StatusNotFound, getCategoryErr.Error())
+		}
+		fmt.Println("categories", categories)
 
 		return c.String(http.StatusOK, token)
 	})
