@@ -40,6 +40,25 @@ type CategoryDetail struct {
 	Name string
 }
 
+type CommentList struct {
+	Data []Comment
+}
+
+type Comment struct {
+	Id string
+	Attributes CommentDetail
+}
+
+type CommentDetail struct {
+	Body string
+}
+
+type ItemsResponse struct {
+	Items ItemList
+	Categories CategoryList
+	Comments CommentList
+}
+
 func getJwtToken() (string, error) {
 	requestStr := `{"auth":{"email":"test@example.com","password":"test123"}}`
 	req, err := http.NewRequest(
@@ -137,6 +156,12 @@ func getCategories(token string) (*CategoryList, error) {
 	return categoryResponse, nil
 }
 
+func getComments(token string, itemIds []int) (*CommentList, error) {
+	// TODO: implement GET Comments
+	commentList := CommentList{}
+	return &commentList, nil
+}
+
 func main() {
 	// Echo instance
 	e := echo.New()
@@ -170,6 +195,7 @@ func main() {
 		}
 		fmt.Println("token", token)
 
+		// TODO: Do concurrently
 		items, getItemErr := getItems(token)
 		if getItemErr != nil {
 			return c.String(http.StatusNotFound, getItemErr.Error())
@@ -182,7 +208,20 @@ func main() {
 		}
 		fmt.Println("categories", categories)
 
-		return c.String(http.StatusOK, token)
+		// TODO: implement
+		itemIds := []int{1}
+		comments, getCommentErr := getComments(token, itemIds)
+		if getCommentErr != nil {
+			return c.String(http.StatusNotFound, getCommentErr.Error())
+		}
+		fmt.Println("comments", comments)
+
+		response := ItemsResponse{Items: *items, Categories: *categories, Comments: *comments}
+		// response := ItemsResponse{}
+		jsonBytes, err := json.Marshal(response)
+
+		fmt.Println("response json", string(jsonBytes))
+		return c.String(http.StatusOK, string(jsonBytes))
 	})
 
 	// Start server
