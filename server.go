@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 type JwtToken struct {
@@ -165,6 +166,8 @@ func getComments(token string, itemIds []int) (*CommentList, error) {
 func main() {
 	// Echo instance
 	e := echo.New()
+
+	e.Use(middleware.CORS())
 
 	// Route => handler
 	e.GET("/", func(c echo.Context) error {
